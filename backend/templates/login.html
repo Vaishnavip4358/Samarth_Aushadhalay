@@ -1,0 +1,255 @@
+<!-- MultipleFiles/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samarth Aushadhalay</title>
+    <!--link to CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/login.css') }}">
+
+    <!-- Box Icon -->
+    <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <!-- Profile -->
+        <div class="profile">
+          <img src="{{ url_for('static', filename='img/logo_srividya_(1).png') }}" alt="">
+
+          <span>SAMARTH AUSHADHALAY</span>
+        </div>
+          <!-- <a href="#" class="logo"><i class='bx bx-plus-medical'></i>Ayurveda</a> -->
+          <!-- menu icon -->
+          <div class="bx bx-menu" id="menu-icon"></div>
+          <!-- Nav List -->
+           <ul class="navbar">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="products.html">Products</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="cart.html">Cart</a></li>
+              <li><a href="order_history.html">My Orders</a></li>
+           </ul>
+           <!-- Header Icon -->
+            <div class="header-icons">
+              <i class='bx bx-menu' id="menu-icon"></i>
+
+              <a href="#user-icon" class="user-icon-active"><i class='bx bx-user' id="user-icon"></i></a>
+
+            </div>
+  
+            
+
+      </header>
+       <!-- User -->
+       <section class="user" id="user" style="
+          background-image: url('{{ url_for('static', filename='img/login.jpg') }}');
+          background-repeat: no-repeat;
+          background-size: cover;
+          background-position: center;
+       ">
+        <div class="user-text">
+        <h2>Login Now</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Your Username....">
+            <input type="password" id="password" placeholder="Password">
+            <input type="submit" value="Login" class="login-btn">
+        </form>
+        <p>Forget Password <a href="{{ url_for('forgot_password_page') }}">Reset Now</a></p>
+        <p>Don't have account <a href="#" id="createAccountLink">Create One</a></p>
+        </div>
+
+      </section>
+
+      <!-- Signup Modal -->
+      <div id="signupModal" class="modal">
+          <div class="modal-content">
+              <span class="close-button">&times;</span>
+              <h2>Sign Up</h2>
+              <form id="signupForm">
+                  <input type="text" id="signupUsername" placeholder="Choose a Username...." required>
+                  <input type="password" id="signupPassword" placeholder="Choose a Password" required>
+                  <input type="submit" value="Sign Up" class="login-btn">
+              </form>
+              <p id="signupMessage" style="color: red; text-align: center; margin-top: 10px;"></p>
+          </div>
+      </div>
+
+      <style>
+          /* Modal (background) */
+          .modal {
+              display: none; /* Hidden by default */
+              position: fixed; /* Stay in place */
+              z-index: 1; /* Sit on top */
+              left: 0;
+              top: 0;
+              width: 100%; /* Full width */
+              height: 100%; /* Full height */
+              overflow: auto; /* Enable scroll if needed */
+              background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+              padding-top: 60px;
+          }
+
+          /* Modal Content/Box */
+          .modal-content {
+              background-color: #fefefe;
+              margin: 5% auto; /* 15% from the top and centered */
+              padding: 20px;
+              border: 1px solid #888;
+              width: 80%; /* Could be more or less, depending on screen size */
+              max-width: 500px;
+              border-radius: 8px;
+              position: relative;
+              box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+          }
+
+          .modal-content h2 {
+              text-align: center;
+              margin-bottom: 20px;
+              color: #333;
+          }
+
+          .modal-content input[type="text"],
+          .modal-content input[type="password"] {
+              width: calc(100% - 20px);
+              padding: 10px;
+              margin-bottom: 15px;
+              border: 1px solid #ddd;
+              border-radius: 5px;
+          }
+
+          .modal-content .login-btn {
+              width: 100%;
+              padding: 10px;
+              background-color: #007bff; /* Example color */
+              color: white;
+              border: none;
+              border-radius: 5px;
+              cursor: pointer;
+              font-size: 16px;
+          }
+
+          .modal-content .login-btn:hover {
+              background-color: #0056b3; /* Darker on hover */
+          }
+
+          /* The Close Button */
+          .close-button {
+              color: #aaa;
+              float: right;
+              font-size: 28px;
+              font-weight: bold;
+              position: absolute;
+              right: 15px;
+              top: 5px;
+          }
+
+          .close-button:hover,
+          .close-button:focus {
+              color: black;
+              text-decoration: none;
+              cursor: pointer;
+          }
+      </style>
+
+      <script>
+          document.getElementById('loginForm').addEventListener('submit', async function(event) {
+              event.preventDefault();
+              const username = document.getElementById('username').value.trim();
+              const password = document.getElementById('password').value;
+              try {
+                  const response = await fetch('/auth/login', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      credentials: 'same-origin',   // ← CRITICAL: include session cookie
+                      body: JSON.stringify({ username, password })
+                  });
+
+                  const data = await response.json();
+
+                  if (response.ok) {
+                      alert(data.message);
+                      window.location.href = '/index.html';
+                  } else {
+                      alert('Login failed: ' + (data.message || response.statusText));
+                  }
+              } catch (err) {
+                  console.error('Login error:', err);
+                  alert('An error occurred. Try again.');
+              }
+          });
+
+          // Get the modal
+          const signupModal = document.getElementById('signupModal');
+          // Get the button that opens the modal
+          const createAccountLink = document.getElementById('createAccountLink');
+          // Get the <span> element that closes the modal
+          const closeButton = document.querySelector('.close-button');
+          // Get the signup form and message div
+          const signupForm = document.getElementById('signupForm');
+          const signupMessage = document.getElementById('signupMessage');
+
+          // When the user clicks the "Create One" link, open the modal
+          createAccountLink.onclick = function(event) {
+              event.preventDefault();
+              signupModal.style.display = 'block';
+              signupMessage.textContent = ''; // Clear previous messages
+              signupForm.reset(); // Clear form fields
+          }
+
+          // When the user clicks on <span> (x), close the modal
+          closeButton.onclick = function() {
+              signupModal.style.display = 'none';
+          }
+
+          // When the user clicks anywhere outside of the modal, close it
+          window.onclick = function(event) {
+              if (event.target == signupModal) {
+                  signupModal.style.display = 'none';
+              }
+          }
+
+          // Handle signup form submission
+          signupForm.addEventListener('submit', async function(event) {
+              event.preventDefault();
+              const username = document.getElementById('signupUsername').value.trim();
+              const password = document.getElementById('signupPassword').value;
+
+              signupMessage.textContent = ''; // Clear previous messages
+
+              try {
+                  const response = await fetch('/auth/register', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ username, password })
+                  });
+
+                  const data = await response.json();
+
+                  if (response.ok) {
+                      signupMessage.style.color = 'green';
+                      signupMessage.textContent = data.message + ' You can now log in.';
+                      signupForm.reset(); // Clear form fields
+                      // Optionally, close modal after a short delay or redirect
+                      setTimeout(() => {
+                          signupModal.style.display = 'none';
+                          // Optionally, pre-fill login form with new username
+                          document.getElementById('username').value = username;
+                          document.getElementById('password').value = '';
+                      }, 2000);
+                  } else {
+                      signupMessage.style.color = 'red';
+                      signupMessage.textContent = 'Sign up failed: ' + (data.message || response.statusText);
+                  }
+              } catch (err) {
+                  console.error('Sign up error:', err);
+                  signupMessage.style.color = 'red';
+                  signupMessage.textContent = 'An error occurred during sign up. Try again.';
+              }
+          });
+</script>
+
+</body>
+</html>

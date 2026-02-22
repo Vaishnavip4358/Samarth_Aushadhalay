@@ -1,0 +1,16 @@
+I have added detailed error logging (`traceback.print_exc()`) to the `create_order` function in `backend/routes/order.py`.
+Please restart your browser (if necessary) and try to proceed to checkout again at `http://127.0.0.1:5000`.
+When the "An error occurred during checkout" message appears, please **copy the entire traceback that is printed in the server console** and provide it to me. This will give us the specific error details needed to fix the issue.
+
+Waiting for the user to provide the traceback.
+
+
+
+To Run application first activate virtual environment :
+D:\Projects\samarth_aushadhalay\.venv\Scripts\activate
+Then : python app.py
+
+
+OR Alternative: You can also run it directly using the virtual environment's Python executable:
+D:\Projects\samarth_aushadhalay\.venv\Scripts\python.exe app.py
+

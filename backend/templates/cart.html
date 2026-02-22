@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - Samarth Aushadhalay</title>
+    <!--link to CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}"> <!-- Assuming a general style.css for nav/footer -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/products.css') }}"> <!-- Reusing product styles for cart items -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/cart.css') }}">
+    
+    <!-- Box Icon -->
+    <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <style>
+        
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <!-- Profile -->
+        <div class="profile">
+          <img src="{{ url_for('static', filename='img/logo_srividya_(1).png') }}" alt="">
+          <span>SAMARTH AUSHADHALAY</span>
+        </div>
+        <!-- menu icon -->
+        <div class="bx bx-menu" id="menu-icon"></div>
+        <!-- Nav List -->
+        <ul class="navbar">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="cart.html" class="cart-active">Cart</a></li>
+            <li><a href="order_history.html">My Orders</a></li>
+        </ul>
+        <!-- Header Icon -->
+        <div class="header-icons">
+            {% if session.get('username') %}
+            <div class="logged-in-user-info">
+              <span>Hello, {{ session['username'] }}</span>
+              <a href="#" id="logout-icon" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class='bx bx-log-out'></i></a>
+              <form id="logout-form" action="{{ url_for('auth.logout') }}" method="POST" style="display: none;"></form>
+            </div>
+            {% else %}
+            <a href="login.html"><i class='bx bx-user' id="user-icon"></i></a>
+            {% endif %}
+            <i class='bx bx-menu' id="menu-icon"></i>
+
+        </div>
+        
+    </header>
+    <section class="cart-container">
+        <h1>Your Shopping Cart</h1>
+        <div id="cart-items-display">
+            <!-- Cart items will be loaded here via JS -->
+            <p class="empty-cart-message">Your cart is empty.</p>
+        </div>
+        <div id="cart-total-display" class="cart-total">
+            <!-- Cart total will be displayed here via JS -->
+        </div>
+        <div style="text-align: right; margin-top: 1rem;">
+            <button id="checkout-btn" class="login-btn" style="display: none;">Proceed to Checkout</button>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            const cartItemsDisplay = document.getElementById('cart-items-display');
+            const cartTotalDisplay = document.getElementById('cart-total-display');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            try {
+                const response = await fetch('/api/cart');
+                const data = await response.json();
+
+                const cart = data.cart || {};
+                const productIdsInCart = Object.keys(cart);
+
+                if (productIdsInCart.length === 0) {
+                    cartItemsDisplay.innerHTML = '<p class="empty-cart-message">Your cart is empty.</p>';
+                    cartTotalDisplay.innerHTML = 'Total: ₹0.00';
+                    checkoutBtn.style.display = 'none';
+                    return;
+                }
+
+                cartItemsDisplay.innerHTML = ''; // Clear empty cart message
+                let grandTotal = 0;
+
+                for (const productId of productIdsInCart) {
+                    const item = cart[productId];
+                    const itemTotal = item.price * item.quantity;
+                    grandTotal += itemTotal;
+
+                    const cartItemDiv = document.createElement('div');
+                    cartItemDiv.classList.add('cart-item');
+                    cartItemDiv.innerHTML = `
+                        <img src="/static/${item.image}" alt="${item.name}">
+                        <div class="cart-item-details">
+                            <h3>${item.name}</h3>
+                            <p>Price: ₹${item.price.toFixed(2)}</p>
+                            <p>Quantity: ${item.quantity}</p>
+                        </div>
+                        <div class="cart-item-price">₹${itemTotal.toFixed(2)}</div>
+                        <button class="remove-btn" data-product-id="${productId}" title="Remove from cart">
+                            <i class='bx bx-trash'></i>
+                        </button>
+                    `;
+                    cartItemsDisplay.appendChild(cartItemDiv);
+
+                    // Add remove functionality
+                    const removeBtn = cartItemDiv.querySelector('.remove-btn');
+                    removeBtn.addEventListener('click', async (event) => {
+                        event.preventDefault();
+                        const prodId = removeBtn.getAttribute('data-product-id');
+                        try {
+                            const response = await fetch(`/api/cart/remove/${prodId}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' }
+                            });
+
+                            if (response.ok) {
+                                alert('Item removed from cart');
+                                location.reload(); // Reload page to update cart display
+                            } else {
+                                alert('Failed to remove item from cart');
+                            }
+                        } catch (error) {
+                            console.error('Error removing item:', error);
+                            alert('An error occurred while removing the item.');
+                        }
+                    });
+                }
+                cartTotalDisplay.innerHTML = `Total: ₹${grandTotal.toFixed(2)}`;
+                checkoutBtn.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error fetching cart items:', error);
+                cartItemsDisplay.innerHTML = '<p class="empty-cart-message">Error loading cart. Please try again.</p>';
+                cartTotalDisplay.innerHTML = '';
+                checkoutBtn.style.display = 'none';
+            }
+
+            checkoutBtn.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/api/order/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert('Order placed successfully!');
+                        window.location.href = '/order_history.html';
+                    } else {
+                        alert('Checkout failed: ' + (data.message || response.statusText));
+                         if (response.status === 401) { // Unauthorized
+                            window.location.href = '/login.html';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Checkout error:', error);
+                    alert('An error occurred during checkout.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
