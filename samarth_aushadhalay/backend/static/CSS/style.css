@@ -1,0 +1,195 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,900;1,100&display=swap');
+*{
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+    scroll-padding-top: 2rem;
+    scroll-behavior: smooth;
+}
+/*Some variables*/ 
+:root {
+    --green-color: #3cb815 ;
+    --light-green-color: #c0eb7b;
+    --orange-color: #ff7e00 ;
+    --light-orange-color: #f75f1d;
+    --dark-olive-green: #556B2F;
+    --text-color: #1a2428;
+    --bg-color: #fff;
+}
+section {
+    padding: 4.5rem 0 1.5rem;
+}
+img {
+    width: 100%;
+}
+body {
+    color: var(--text-color);
+}
+header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-color);
+    box-shadow: 0 8px 11px rgb(14 55 54 / 15%);
+    padding: 20px 100px;
+    transition: 0.5s;
+}
+.profile {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5rem;
+    cursor: pointer;
+}
+.profile img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+}
+.profile span {
+    font-size: 15px;
+    font-weight: 500;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    column-gap: 0.5rem;
+}
+.logo .bx {
+    font-size: 34px;
+    color: var(--orange-color);
+}
+.navbar {
+    display: flex;
+    column-gap: 0.5rem;
+}
+.navbar a {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+}
+.navbar a:hover,
+.navbar .home-active {
+    background-color: #556B2F;
+    border-radius: 5rem;
+    color: var(--bg-color);
+    transition: background 0.5s;
+}
+.header-icons {
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 100000;
+    display: flex; /* Ensure flex behavior for aligning items */
+    align-items: center; /* Vertically align items */
+    column-gap: 1.5rem; /* Space between icons/elements */
+}
+
+.logged-in-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.logged-in-user-info span {
+    white-space: nowrap; /* Prevent username from wrapping */
+}
+
+.header-icons a {
+    color: var(--text-color);
+}
+
+.header-icons a .bx {
+    font-size: 22px;
+}
+
+#menu-icon {
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10001;
+    display: none;
+}
+.search-box {
+    position: absolute;
+    top: 110%;
+    right: 1rem;
+}
+.search-box input{
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-radius: 0.5rem;
+    width: 280px;
+    box-shadow: var(--text-color);
+}
+.search-box.active {
+    right: 1rem;
+    transition: 0.2s;
+}
+.home {
+    position: relative;
+    width: 100%;
+    min-height: 700px;
+    display: flex;
+    align-items: center;
+}
+.home img {
+    width: 600px;
+    position: absolute;
+    bottom: -20px;
+    right: 200px;
+    top: 200px;
+}
+.home-text {
+    padding: 0 150px;  
+}
+.home-text h1 {
+    font-weight: 4000;
+    text-transform: uppercase;
+    color: #1a2428;
+}
+.home-text h4 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.btn {
+    padding: 0.6rem 1rem;
+    background: darkolivegreen;
+    color: var(--bg-color);
+    font-weight: 400;
+    border-radius: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 0.5rem;
+    max-width: 160px;
+}
+.btn .bx {
+    padding: 4px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    border-radius: 1rem;
+    font-size: 20px;
+    margin: auto;
+}
+.btn:hover {
+    background-color: darkgray;
+    transition: 0.2s ease;
+}
+

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samarth Aushadhalay</title>
+    <!--link to CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/products.css') }}">
+    <!-- Box Icon -->
+    <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+</head>
+<body>
+     <!-- Navbar -->
+     <header>
+        <!-- Profile -->
+        <div class="profile">
+          <img src="{{ url_for('static', filename='img/logo_srividya_(1).png') }}" alt="">
+
+          <span>SAMARTH AUSHADHALAY</span>
+        </div>
+          <!-- <a href="#" class="logo"><i class='bx bx-plus-medical'></i>Ayurveda</a> -->
+          <!-- menu icon -->
+          <div class="bx bx-menu" id="menu-icon"></div>
+          <!-- Nav List -->
+           <ul class="navbar">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="#products" class="products-active">Products</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="cart.html">Cart</a></li>
+              <li><a href="order_history.html">My Orders</a></li>
+           </ul>
+           <!-- Header Icon -->
+            <div class="header-icons">
+              {% if session.get('username') %}
+              <div class="logged-in-user-info">
+                <span>Hello, {{ session['username'] }}</span>
+                <a href="#" id="logout-icon" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class='bx bx-log-out'></i></a>
+                <form id="logout-form" action="{{ url_for('auth.logout') }}" method="POST" style="display: none;"></form>
+              </div>
+              {% else %}
+              <a href="login.html" class="user-icon-active"><i class='bx bx-user' id="user-icon"></i></a>
+              {% endif %}
+              <i class='bx bx-menu' id="menu-icon"></i>
+
+            </div>
+            
+      </header>      <!-- Top banner -->
+      <section class="top-banner">
+        <div class="container" style="background-image: url('{{ url_for('static', filename='img/background_1.jpg') }}');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;">
+          <h1>Ayurvedic Medicines</h1>
+        </div>
+      </section>
+        <!-- Product Content -->
+        <div class="products-container">
+        <!-- Products will be loaded here via JS -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                fetch("/api/products")
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(products => {
+                    const container = document.querySelector(".products-container");
+                    if (!container) {
+                        console.error("Products container not found");
+                        return;
+                    }
+                    container.innerHTML = ""; // Clear any existing content
+                    products.forEach(product => {
+                        const box = document.createElement("div");
+                        box.classList.add("box");
+
+                        // Construct the image URL correctly in JavaScript
+                        const imageUrl = `/static/${product.image}`;
+
+                        box.innerHTML = `
+                           <img src="${imageUrl}" alt="${product.name}">
+                           <h2>${product.name}</h2>
+                           <h3 class="price">₹${product.price} <span><br>${product.weight}</span></h3>
+                           <i class='bx bx-cart-alt add-to-cart-icon' data-product-id="${product.id}"></i>
+                        `;
+                        
+                        container.appendChild(box);
+                    });
+                    
+                    // Add event listeners to "Add to Cart" icons
+                    document.querySelectorAll('.add-to-cart-icon').forEach(icon => {
+                        icon.addEventListener('click', async (event) => {
+                            const productId = event.target.getAttribute('data-product-id');
+                            try {
+                                const response = await fetch('/api/cart/add', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ product_id: productId, quantity: 1 })
+                                });
+
+                                const data = await response.json();
+
+                                if (response.ok) {
+                                    alert(data.message);
+                                    // Optionally, update a cart count here
+                                } else {
+                                    alert('Failed to add to cart: ' + (data.message || response.statusText));
+                                }
+                            } catch (error) {
+                                console.error('Error adding to cart:', error);
+                                alert('An error occurred while adding to cart.');
+                            }
+                        });
+                    });
+
+                })
+                .catch(err => console.error("Failed to load products:", err));
+            });
+      </script>
+
+    
+</body>
+</html>

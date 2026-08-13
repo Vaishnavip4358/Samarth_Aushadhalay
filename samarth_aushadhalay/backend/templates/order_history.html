@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - Samarth Aushadhalay</title>
+    <!--link to CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/products.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/order_history.css') }}">
+    <!-- Box Icon -->
+    <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <style>
+        
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <div class="profile">
+          <img src="{{ url_for('static', filename='img/logo_srividya_(1).png') }}" alt="">
+          <span>SAMARTH AUSHADHALAY</span>
+        </div>
+        <div class="bx bx-menu" id="menu-icon"></div>
+        <ul class="navbar">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="cart.html">Cart</a></li>
+            <li><a href="order_history.html" class="order-history-active">My Orders</a></li>
+        </ul>
+        <div class="header-icons">
+            {% if session.get('username') %}
+            <div class="logged-in-user-info">
+              <span>Hello, {{ session['username'] }}</span>
+              <a href="#" id="logout-icon" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class='bx bx-log-out'></i></a>
+              <form id="logout-form" action="{{ url_for('auth.logout') }}" method="POST" style="display: none;"></form>
+            </div>
+            {% else %}
+            <a href="login.html"><i class='bx bx-user' id="user-icon"></i></a>
+            {% endif %}
+            <i class='bx bx-menu' id="menu-icon"></i>
+
+        </div>
+        
+    </header>
+    <section class="order-history-container">
+        <h1>Your Order History</h1>
+        <div id="order-history-display">
+            <!-- Order history will be loaded here via JS -->
+            <p class="empty-history-message">You have no past orders.</p>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            const orderHistoryDisplay = document.getElementById('order-history-display');
+
+            try {
+                const response = await fetch('/api/order/history');
+                const data = await response.json();
+
+                if (response.status === 401) {
+                    orderHistoryDisplay.innerHTML = '<p class="empty-history-message">Please <a href="/login.html">log in</a> to see your order history.</p>';
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to fetch order history');
+                }
+
+                const history = data.history || [];
+
+                if (history.length === 0) {
+                    orderHistoryDisplay.innerHTML = '<p class="empty-history-message">You have no past orders.</p>';
+                    return;
+                }
+
+                orderHistoryDisplay.innerHTML = ''; // Clear message
+
+                history.forEach(order => {
+                    const orderDiv = document.createElement('div');
+                    orderDiv.classList.add('order');
+
+                    const orderDate = new Date(order.created_at).toLocaleString();
+
+                    let itemsHtml = '';
+                    order.items.forEach(item => {
+                        itemsHtml += `
+                            <div class="order-item">
+                                <img src="/static/img/default-product.png" alt="${item.name}"> <!-- Replace with actual image path if available -->
+                                <div class="order-item-details">
+                                    <strong>${item.name}</strong><br>
+                                    <span>Quantity: ${item.quantity}</span> |
+                                    <span>Price: ₹${item.price.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    orderDiv.innerHTML = `
+                        <div class="order-header">
+                            <h3>Order ID: ${order.order_id}</h3>
+                            <span>${orderDate}</span>
+                        </div>
+                        ${itemsHtml}
+                        <div class="order-total">
+                            Total: ₹${order.total_price.toFixed(2)}
+                        </div>
+                    `;
+                    orderHistoryDisplay.appendChild(orderDiv);
+                });
+
+            } catch (error) {
+                console.error('Error fetching order history:', error);
+                orderHistoryDisplay.innerHTML = '<p class="empty-history-message">Error loading order history. Please try again.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

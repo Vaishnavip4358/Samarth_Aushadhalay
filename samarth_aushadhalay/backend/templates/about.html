@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samarth Aushadhalay</title>
+    <!--link to CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/about.css') }}">
+    <!-- Box Icon -->
+    <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+     <header>
+      <!-- Profile -->
+      <div class="profile">
+        <img src="{{ url_for('static', filename='img/logo_srividya_(1).png') }}" alt="">
+        <span>SAMARTH AUSHADHALAY</span>
+      </div>
+        <!-- <a href="#" class="logo"><i class='bx bx-plus-medical'></i>Ayurveda</a> -->
+        <!-- menu icon -->
+        <div class="bx bx-menu" id="menu-icon"></div>
+        <!-- Nav List -->
+         <ul class="navbar">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="#about" class="about-active">About</a></li>
+            <li><a href="cart.html">Cart</a></li>
+            <li><a href="order_history.html">My Orders</a></li>
+         </ul>
+
+         <!-- Header Icon -->
+          <div class="header-icons">
+            {% if session.get('username') %}
+            <div class="logged-in-user-info">
+              <span>Hello, {{ session['username'] }}</span>
+              <a href="#" id="logout-icon" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class='bx bx-log-out'></i></a>
+              <form id="logout-form" action="{{ url_for('auth.logout') }}" method="POST" style="display: none;"></form>
+            </div>
+            {% else %}
+            <a href="login.html"><i class='bx bx-user' id="user-icon"></i></a>
+            {% endif %}
+            <i class='bx bx-menu' id="menu-icon"></i>
+
+          </div>
+
+          
+
+     </header>
+     <!-- Home -->
+
+     <section class="home-content" style="
+         background-image: url('{{ url_for('static', filename='img/image_2.jpeg') }}');
+         background-repeat: no-repeat;
+         background-size: cover;
+         background-position: center;
+     ">
+        <div class="text-container">
+            <div class="home-text">
+                <h1>What is Ayurveda?</h1>
+                <h4>Ayurveda is a whole-body (holistic) system of medicine that began in India more than 3,000 years ago. Ayurveda means the study of life. It takes a natural approach to all aspects of health and well-being.
+
+                    Ayurveda is based on the idea that each person has certain life forces (doshas) and everything in the universe is connected. An imbalance in 1 area can affect another. When the imbalance is not fixed, disease and illness can occur. Ayurveda mostly uses nutrition, lifestyle changes, and natural treatments. These are used to support balance and a return to health. Ayurveda is very focused on overall health. But it may use specific treatments for some diseases.</h4>
+                
+            </div>
+        </div>
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='img/Home.png') }}" alt="Description of image">
+        </div>
+    </section>
+
+    
+</body>
+</html>
